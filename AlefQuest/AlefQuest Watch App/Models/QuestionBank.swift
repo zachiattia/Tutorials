@@ -82,44 +82,45 @@ enum QuestionBank {
         }
     }
 
-    /// Letter Order questions: show a letter and ask for the letter that comes
-    /// immediately NEXT or BEFORE it in the alef-bet. Teaches the sequence.
+    /// Letter Order questions: show three consecutive letters of the alef-bet
+    /// with one position blanked out (e.g. "_ , ג, ד"), and the player picks the
+    /// missing Hebrew letter. The blank can be in any of the three positions, so
+    /// kids learn what comes before, between, and after. Answer options are
+    /// Hebrew letters.
     private static func orderQuestions() -> [HebrewQuestion] {
-        let letters = alphabet
-        let allNames = letters.map { $0.answer }
+        let letters = alphabet                       // ordered alef-bet
+        let allHebrew = letters.map { $0.hebrew }
         var questions: [HebrewQuestion] = []
 
-        for (index, letter) in letters.enumerated() {
-            // "What comes NEXT?" — valid for every letter except the last.
-            if index < letters.count - 1 {
-                let answer = letters[index + 1].answer
-                questions.append(
-                    HebrewQuestion(
-                        hebrew: letter.hebrew,
-                        answer: answer,
-                        options: makeOptions(correct: answer, pool: allNames),
-                        level: .order,
-                        hint: "What comes NEXT? →"
-                    )
-                )
-            }
+        // Slide a 3-letter window across the alphabet.
+        guard letters.count >= 3 else { return [] }
+        for start in 0...(letters.count - 3) {
+            let window = Array(letters[start..<(start + 3)])
 
-            // "What comes BEFORE?" — valid for every letter except the first.
-            if index > 0 {
-                let answer = letters[index - 1].answer
+            // Blank out each position in turn to make three questions.
+            for blankIndex in 0..<3 {
+                let answer = window[blankIndex].hebrew
+                let tokens = window.enumerated().map { index, item in
+                    index == blankIndex ? Self.blankToken : item.hebrew
+                }
                 questions.append(
                     HebrewQuestion(
-                        hebrew: letter.hebrew,
+                        hebrew: tokens.joined(separator: Self.sequenceSeparator),
                         answer: answer,
-                        options: makeOptions(correct: answer, pool: allNames),
+                        options: makeOptions(correct: answer, pool: allHebrew),
                         level: .order,
-                        hint: "← What comes BEFORE?"
+                        hint: "Fill the missing letter"
                     )
                 )
             }
         }
         return questions
     }
+
+    /// Placeholder rendered for the blanked slot, and the separator used to join
+    /// the sequence into `hebrew` (the view splits on it again).
+    static let blankToken = "_"
+    static let sequenceSeparator = ","
 
     /// Builds a shuffled option list: the correct answer plus distractors drawn
     /// from `pool`, with the correct answer landing in a random slot.

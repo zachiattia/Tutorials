@@ -57,7 +57,7 @@ struct GameView: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(promptBackground)
 
-            VStack(spacing: 2) {
+            VStack(spacing: 4) {
                 if let hint = viewModel.currentQuestion?.hint {
                     Text(hint)
                         .font(.system(size: 12, weight: .heavy, design: .rounded))
@@ -65,11 +65,16 @@ struct GameView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
                 }
-                Text(viewModel.currentQuestion?.hebrew ?? "")
-                    .font(.system(size: promptFontSize, weight: .bold))
-                    .minimumScaleFactor(0.4)
-                    .lineLimit(1)
-                    .foregroundStyle(.white)
+
+                if viewModel.currentQuestion?.level == .order {
+                    orderSequence
+                } else {
+                    Text(viewModel.currentQuestion?.hebrew ?? "")
+                        .font(.system(size: promptFontSize, weight: .bold))
+                        .minimumScaleFactor(0.4)
+                        .lineLimit(1)
+                        .foregroundStyle(.white)
+                }
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 10)
@@ -83,12 +88,48 @@ struct GameView: View {
     }
 
     /// Font size for the big Hebrew prompt, tuned per level.
+    /// (The Letter Order level renders its own sequence cells instead.)
     private var promptFontSize: CGFloat {
         switch viewModel.level {
         case .letters: return 70
-        case .order:   return 60   // single letter, but leaves room for the hint
+        case .order:   return 44
         case .sounds:  return 60
         }
+    }
+
+    /// The three-slot sequence for the Letter Order level, e.g. "_ , ג, ד".
+    /// Forced left-to-right so the earliest letter is always on the left.
+    private var orderSequence: some View {
+        let tokens = (viewModel.currentQuestion?.hebrew ?? "")
+            .split(separator: Character(QuestionBank.sequenceSeparator))
+            .map(String.init)
+
+        return HStack(spacing: 6) {
+            ForEach(Array(tokens.enumerated()), id: \.offset) { _, token in
+                sequenceCell(token)
+            }
+        }
+        .environment(\.layoutDirection, .leftToRight)
+    }
+
+    @ViewBuilder
+    private func sequenceCell(_ token: String) -> some View {
+        let isBlank = (token == QuestionBank.blankToken)
+        Text(isBlank ? "" : token)
+            .font(.system(size: 34, weight: .bold))
+            .frame(width: 42, height: 54)
+            .foregroundStyle(.white)
+            .background {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(isBlank ? Color.white.opacity(0.18) : Color.white.opacity(0.08))
+            }
+            .overlay {
+                if isBlank {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(.white.opacity(0.9),
+                                      style: StrokeStyle(lineWidth: 2, dash: [4]))
+                }
+            }
     }
 
     private var promptBackground: Color {
