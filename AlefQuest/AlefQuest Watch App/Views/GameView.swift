@@ -140,11 +140,19 @@ struct GameView: View {
         }
     }
 
+    /// Correct-answer text. The all-Hebrew Letter Order level praises in Hebrew.
+    private var correctFeedbackText: String {
+        if viewModel.isMilestoneStreak {
+            return "🔥 \(viewModel.streak)"
+        }
+        return viewModel.level == .order ? "כל הכבוד!" : "Correct!"
+    }
+
     @ViewBuilder
     private var feedbackBanner: some View {
         switch viewModel.feedback {
         case .correct:
-            Text(viewModel.isMilestoneStreak ? "🔥 \(viewModel.streak) streak!" : "Correct!")
+            Text(correctFeedbackText)
                 .font(.caption2.bold())
                 .padding(.vertical, 2).padding(.horizontal, 8)
                 .background(.green, in: Capsule())
