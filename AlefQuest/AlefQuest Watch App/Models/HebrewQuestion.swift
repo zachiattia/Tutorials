@@ -8,20 +8,19 @@
 import Foundation
 
 /// A difficulty level in the game. Higher raw values are harder.
+/// Declaration order is the order shown in the level picker.
 enum GameLevel: Int, CaseIterable, Identifiable, Comparable {
     case letters = 1    // Single Hebrew letters:   א → Alef
-    case sounds = 2     // Vowelled syllables:      בָ → Ba
-    case words = 3      // Whole words:             שָׁלוֹם → Shalom
-    case phrases = 4    // Short phrases:           שָׁלוֹם אַבָּא → Shalom Abba
+    case order = 2      // Alef-bet sequence:       א → (next?) Bet
+    case sounds = 3     // Vowelled syllables:      בָ → Ba
 
     var id: Int { rawValue }
 
     var title: String {
         switch self {
         case .letters: return "Letters"
+        case .order:   return "Letter Order"
         case .sounds:  return "Sounds"
-        case .words:   return "Words"
-        case .phrases: return "Phrases"
         }
     }
 
@@ -29,9 +28,8 @@ enum GameLevel: Int, CaseIterable, Identifiable, Comparable {
     var emoji: String {
         switch self {
         case .letters: return "🔤"
+        case .order:   return "🔢"
         case .sounds:  return "🔊"
-        case .words:   return "📖"
-        case .phrases: return "💬"
         }
     }
 
@@ -55,6 +53,10 @@ struct HebrewQuestion: Identifiable, Equatable {
 
     /// The difficulty level this question belongs to.
     let level: GameLevel
+
+    /// Optional instruction shown above the Hebrew text. Used by the
+    /// Letter Order level ("What comes NEXT?" / "What comes BEFORE?").
+    var hint: String? = nil
 
     static func == (lhs: HebrewQuestion, rhs: HebrewQuestion) -> Bool {
         lhs.id == rhs.id

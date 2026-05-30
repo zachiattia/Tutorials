@@ -1,7 +1,8 @@
 # AlefQuest — Hebrew Learning Game for Apple Watch ⌚🔤
 
-A simple, fast, and rewarding watchOS game that helps kids learn Hebrew
-letters, sounds, words, and short phrases through multiple-choice questions.
+A simple, fast, and rewarding watchOS game that helps kids learn the Hebrew
+alef-bet — letter names, letter order, and syllable sounds — through
+multiple-choice questions.
 
 > Show a Hebrew character → tap the correct English transliteration → build
 > streaks and earn rewards. Sessions are designed to last 1–3 minutes, perfect
@@ -19,12 +20,17 @@ and your score never drops below zero.
 
 ### Levels
 
-| Level | Name      | Example            |
-|-------|-----------|--------------------|
-| 1     | Letters   | `א` → **Alef**     |
-| 2     | Sounds    | `בָ` → **Ba**      |
-| 3     | Words     | `שָׁלוֹם` → **Shalom** |
-| 4     | Phrases   | `שָׁלוֹם אַבָּא` → **Shalom Abba** |
+| Level | Name           | What it asks                          | Example |
+|-------|----------------|---------------------------------------|---------|
+| 1     | Letters        | Name this letter                      | `א` → **Alef** |
+| 2     | Letter Order   | Which letter comes next / before?     | `א` + "What comes NEXT? →" → **Bet** |
+| 3     | Sounds         | Name this vowelled syllable           | `בָ` → **Ba** |
+
+**Letter Order** teaches the alef-bet sequence: it shows a letter and asks for
+the letter immediately **after** or **before** it, so kids learn the order — not
+just individual letters.
+
+*(Words and Phrases levels are planned but disabled for now.)*
 
 Switch levels any time from the slider button (top-right of the game screen).
 
@@ -76,12 +82,15 @@ plausible distractors drawn from sibling questions) are generated
 automatically, so there is nothing else to maintain.
 
 ```swift
-.words: [
-    ("אַבָּא", "Abba"),
-    ("אִמָּא", "Ima"),
-    // add new words here ...
+.letters: [
+    ("א", "Alef"),
+    ("ב", "Bet"),
+    // add new letters here ...
 ]
 ```
+
+The **Letter Order** level is generated automatically from the `.letters`
+array order — no separate data to maintain.
 
 ## Roadmap
 

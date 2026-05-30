@@ -50,27 +50,12 @@ enum QuestionBank {
             ("גוֹ", "Go"),
             ("קֵ", "Ke"),
         ],
-        .words: [
-            ("אַבָּא", "Abba"),
-            ("אִמָּא", "Ima"),
-            ("שָׁלוֹם", "Shalom"),
-            ("כֶּלֶב", "Kelev"),
-            ("חָתוּל", "Chatul"),
-            ("מַיִם", "Mayim"),
-            ("יֶלֶד", "Yeled"),
-            ("סֵפֶר", "Sefer"),
-            ("תּוֹדָה", "Toda"),
-            ("בַּיִת", "Bayit"),
-        ],
-        .phrases: [
-            ("שָׁלוֹם אַבָּא", "Shalom Abba"),
-            ("אֲנִי אוֹרִי", "Ani Ori"),
-            ("מַה שְׁלוֹמְךָ", "Ma shlomcha"),
-            ("בֹּקֶר טוֹב", "Boker tov"),
-            ("לַיְלָה טוֹב", "Layla tov"),
-            ("תּוֹדָה רַבָּה", "Toda raba"),
-        ],
     ]
+
+    /// Convenience: the alef-bet in order (reused for the Letter Order level).
+    private static var alphabet: [(hebrew: String, answer: String)] {
+        content[.letters] ?? []
+    }
 
     /// Number of answer options shown per question (1 correct + 3 distractors).
     /// The correct answer is placed in a random slot for every question, so the
@@ -79,18 +64,15 @@ enum QuestionBank {
 
     /// Builds the full question list for a level with randomized distractors.
     static func questions(for level: GameLevel) -> [HebrewQuestion] {
+        if level == .order {
+            return orderQuestions()
+        }
+
         let pairs = content[level] ?? []
         let allAnswers = pairs.map { $0.answer }
 
         return pairs.map { pair in
-            // Pick distractors from the other answers in the same level.
-            let distractors = allAnswers
-                .filter { $0 != pair.answer }
-                .shuffled()
-                .prefix(max(0, optionCount - 1))
-
-            let options = ([pair.answer] + distractors).shuffled()
-
+            let options = makeOptions(correct: pair.answer, pool: allAnswers)
             return HebrewQuestion(
                 hebrew: pair.hebrew,
                 answer: pair.answer,
@@ -98,6 +80,55 @@ enum QuestionBank {
                 level: level
             )
         }
+    }
+
+    /// Letter Order questions: show a letter and ask for the letter that comes
+    /// immediately NEXT or BEFORE it in the alef-bet. Teaches the sequence.
+    private static func orderQuestions() -> [HebrewQuestion] {
+        let letters = alphabet
+        let allNames = letters.map { $0.answer }
+        var questions: [HebrewQuestion] = []
+
+        for (index, letter) in letters.enumerated() {
+            // "What comes NEXT?" — valid for every letter except the last.
+            if index < letters.count - 1 {
+                let answer = letters[index + 1].answer
+                questions.append(
+                    HebrewQuestion(
+                        hebrew: letter.hebrew,
+                        answer: answer,
+                        options: makeOptions(correct: answer, pool: allNames),
+                        level: .order,
+                        hint: "What comes NEXT? →"
+                    )
+                )
+            }
+
+            // "What comes BEFORE?" — valid for every letter except the first.
+            if index > 0 {
+                let answer = letters[index - 1].answer
+                questions.append(
+                    HebrewQuestion(
+                        hebrew: letter.hebrew,
+                        answer: answer,
+                        options: makeOptions(correct: answer, pool: allNames),
+                        level: .order,
+                        hint: "← What comes BEFORE?"
+                    )
+                )
+            }
+        }
+        return questions
+    }
+
+    /// Builds a shuffled option list: the correct answer plus distractors drawn
+    /// from `pool`, with the correct answer landing in a random slot.
+    private static func makeOptions(correct: String, pool: [String]) -> [String] {
+        let distractors = pool
+            .filter { $0 != correct }
+            .shuffled()
+            .prefix(max(0, optionCount - 1))
+        return ([correct] + distractors).shuffled()
     }
 
     /// A fresh, shuffled set of questions for a level.

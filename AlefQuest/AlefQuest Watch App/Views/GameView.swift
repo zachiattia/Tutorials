@@ -57,13 +57,22 @@ struct GameView: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(promptBackground)
 
-            Text(viewModel.currentQuestion?.hebrew ?? "")
-                .font(.system(size: promptFontSize, weight: .bold))
-                .minimumScaleFactor(0.4)
-                .lineLimit(1)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 10)
-                .foregroundStyle(.white)
+            VStack(spacing: 2) {
+                if let hint = viewModel.currentQuestion?.hint {
+                    Text(hint)
+                        .font(.system(size: 12, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.9))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                }
+                Text(viewModel.currentQuestion?.hebrew ?? "")
+                    .font(.system(size: promptFontSize, weight: .bold))
+                    .minimumScaleFactor(0.4)
+                    .lineLimit(1)
+                    .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 10)
         }
         .frame(maxWidth: .infinity)
         .frame(minHeight: 90)
@@ -73,13 +82,12 @@ struct GameView: View {
         .animation(.easeInOut(duration: 0.25), value: viewModel.feedback)
     }
 
-    /// Smaller font for longer prompts (phrases) so they stay readable.
+    /// Font size for the big Hebrew prompt, tuned per level.
     private var promptFontSize: CGFloat {
         switch viewModel.level {
         case .letters: return 70
+        case .order:   return 60   // single letter, but leaves room for the hint
         case .sounds:  return 60
-        case .words:   return 44
-        case .phrases: return 30
         }
     }
 
