@@ -9,8 +9,11 @@ letters, sounds, words, and short phrases through multiple-choice questions.
 
 ## Gameplay
 
-The game shows a piece of Hebrew text and 3 English transliteration choices.
-Tap the right one to score a point and grow your streak. Wrong answers are
+The game shows a piece of Hebrew text and **4** English transliteration
+choices — one correct, three distractors drawn from the rest of the alef-bet.
+The correct answer lands in a **random slot every question**, so it is never in
+a predictable position. Tap the right one to score a point and grow your
+streak. Wrong answers are
 never punishing — the correct answer is highlighted in green so you learn it,
 and your score never drops below zero.
 

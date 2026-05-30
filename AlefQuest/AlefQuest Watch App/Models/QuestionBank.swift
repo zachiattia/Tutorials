@@ -72,8 +72,10 @@ enum QuestionBank {
         ],
     ]
 
-    /// Number of answer options shown per question (correct + distractors).
-    private static let optionCount = 3
+    /// Number of answer options shown per question (1 correct + 3 distractors).
+    /// The correct answer is placed in a random slot for every question, so the
+    /// right choice is never in a predictable position.
+    private static let optionCount = 4
 
     /// Builds the full question list for a level with randomized distractors.
     static func questions(for level: GameLevel) -> [HebrewQuestion] {
