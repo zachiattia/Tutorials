@@ -97,8 +97,9 @@ struct GameView: View {
         }
     }
 
-    /// The three-slot sequence for the Letter Order level, e.g. "_ , ג, ד".
-    /// Forced left-to-right so the earliest letter is always on the left.
+    /// The three-slot sequence for the Letter Order level. Rendered
+    /// right-to-left (proper Hebrew direction): the earliest letter is on the
+    /// right, so the alef-bet reads naturally.
     private var orderSequence: some View {
         let tokens = (viewModel.currentQuestion?.hebrew ?? "")
             .split(separator: Character(QuestionBank.sequenceSeparator))
@@ -109,7 +110,7 @@ struct GameView: View {
                 sequenceCell(token)
             }
         }
-        .environment(\.layoutDirection, .leftToRight)
+        .environment(\.layoutDirection, .rightToLeft)
     }
 
     @ViewBuilder
@@ -140,19 +141,11 @@ struct GameView: View {
         }
     }
 
-    /// Correct-answer text. The all-Hebrew Letter Order level praises in Hebrew.
-    private var correctFeedbackText: String {
-        if viewModel.isMilestoneStreak {
-            return "🔥 \(viewModel.streak)"
-        }
-        return viewModel.level == .order ? "כל הכבוד!" : "Correct!"
-    }
-
     @ViewBuilder
     private var feedbackBanner: some View {
         switch viewModel.feedback {
         case .correct:
-            Text(correctFeedbackText)
+            Text(viewModel.isMilestoneStreak ? "🔥 \(viewModel.streak) streak!" : "Correct!")
                 .font(.caption2.bold())
                 .padding(.vertical, 2).padding(.horizontal, 8)
                 .background(.green, in: Capsule())

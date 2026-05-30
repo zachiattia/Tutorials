@@ -23,13 +23,15 @@ and your score never drops below zero.
 | Level | Name           | What it asks                          | Example |
 |-------|----------------|---------------------------------------|---------|
 | 1     | Letters        | Name this letter                      | `א` → **Alef** |
-| 2     | Letter Order   | Fill the missing letter in a sequence | `_ , ג, ד` → **ב** |
+| 2     | Letter Order   | Fill the missing letter in a sequence | `ד ג _` (reads right-to-left) → **ב** |
 | 3     | Sounds         | Name this vowelled syllable           | `בָ` → **Ba** |
 
 **Letter Order** teaches the alef-bet sequence: it shows three consecutive
-letters with one slot blanked out (the blank can be at the start, middle, or
-end), and the player taps the missing **Hebrew letter**. So kids learn what
-comes before, between, and after — not just individual letters.
+letters **right-to-left** (proper Hebrew direction) with one slot blanked out
+(the blank can be at the start, middle, or end), and the player taps the
+missing **Hebrew letter**. So kids learn what comes before, between, and after —
+not just individual letters. The Hebrew is shown right-to-left; the rest of the
+UI (scores, streak, labels) stays in English.
 
 *(Words and Phrases levels are planned but disabled for now.)*
 

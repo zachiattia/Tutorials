@@ -109,7 +109,7 @@ enum QuestionBank {
                         answer: answer,
                         options: makeOptions(correct: answer, pool: allHebrew),
                         level: .order,
-                        hint: "איזו אות חסרה?"   // "Which letter is missing?"
+                        hint: "Fill the missing letter"
                     )
                 )
             }
